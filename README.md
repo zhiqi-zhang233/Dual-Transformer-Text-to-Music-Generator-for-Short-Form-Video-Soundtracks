@@ -13,7 +13,7 @@ Today, there are many text-to-music AI models that can create music from a simpl
 
 > You can describe the style, but it is hard for the model to follow a specific rhythmic pattern.
 
-Most people who work with audio try to fix this by editing music in professional tools. A common tool is called a **digital audio workstation** (DAW). Examples include GarageBand or FL Studio. However, this requires:
+Most people who work with audio try to fix this by editing music in professional tools. A common tool is called a digital audio workstation (DAW). Examples include GarageBand or FL Studio. However, this requires:
 
 - Learning music editing skills  
 - Having time to manually adjust tempo and structure  
@@ -22,6 +22,14 @@ Most people who work with audio try to fix this by editing music in professional
 In other words:  
 **AI can generate sound, but it is still difficult to “tell” the AI what structure the music should follow.**
 
+### Problem Statement
+
+Text-to-music models such as MusicGen can create realistic audio directly from a written prompt. However, current systems offer very limited structural control. At the same time, symbolic music models (MIDI Transformers) have demonstrated strong controllability. They treat music as a sequence of discrete musical events, similar to how language models process words. Symbolic representations make it possible to model tempo, beat patterns, and multi-track structure.
+
+In this project, we explore a lightweight way to combine these two research directions:
+
+using simple symbolic cues (such as BPM and segmentation from a MIDI reference) to guide and evaluate MusicGen outputs.
+
 ### Existing Text-to-Music Baseline (MusicGen)
 
 Most people are familiar with text generation systems such as GPT. These models predict one token at a time, based on all previously generated tokens. Extending this idea to music sounds simple in theory, but there is one fundamental problem:
@@ -29,10 +37,9 @@ Most people are familiar with text generation systems such as GPT. These models 
 > **Music is not text. It is continuous, multi-layered, and structurally complex.**
 
 
-[]()
+![patterns](graph/patterns.jpg)
 
-#### Audio Tokenization with EnCodec (Discrete Music Representation)
-
+#### Audio Tokenization with EnCodec
 MusicGen solves the “continuous audio” problem using an existing neural audio codec called **EnCodec**.
 
 * Chop audio into very small time windows (like frames)
@@ -58,7 +65,7 @@ This creates a multi-stream sequence problem:
 
 MusicGen explores four different patterns for merging K parallel token streams into a single sequence.
 
-[]()
+![001](graph/001.jpg)
 
 - Delay Pattern ensures that the Transformer “knows the plan” before filling in the details.
 
@@ -94,14 +101,6 @@ A MIDI file contains structured musical events such as:
 
 These events are discrete and time-aligned, which makes them easy to edit and analyze. Recent research shows that Transformer models can learn these symbolic patterns very well. Models such as MuseNet, Music Transformer, and Multitrack Music Transformer can create multi-instrument tracks with clear structure, repeated sections, and consistent rhythm. This makes symbolic models highly useful for tasks where musical structure matters, even if they do not produce audio directly.
 
-### Problem Statement
-
-Text-to-music models such as MusicGen can create realistic audio directly from a written prompt. However, current systems offer very limited structural control. At the same time, symbolic music models (MIDI Transformers) have demonstrated strong controllability. They treat music as a sequence of discrete musical events, similar to how language models process words. Symbolic representations make it possible to model tempo, beat patterns, and multi-track structure.
-
-In this project, I explore a lightweight way to combine these two research directions:
-
-using simple symbolic cues (such as BPM and segmentation from a MIDI reference) to guide and evaluate MusicGen outputs.
-
 ## Methodology
 
 This project proposes a lightweight control framework for text-to-music generation. Instead of training a new model, I combine symbolic structure information extracted from MIDI files with MusicGen outputs. The goal is to make AI-generated music more predictable, more aligned with user intent, and more suitable for real creative workflows.
@@ -121,8 +120,7 @@ This project proposes a lightweight control framework for text-to-music generati
 ### Experiment Architecture
 
 #### Experiment 1
-[]()
-
+![Experiment 2](graph/result2.png)
 In the first experiment, we ask a basic question:
 
 > Does adding structural information (like BPM and sections) to a MusicGen prompt produce music that better matches the intended rhythm and timing?
