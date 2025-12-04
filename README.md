@@ -36,8 +36,7 @@ Most people are familiar with text generation systems such as GPT. These models 
 
 > **Music is not text. It is continuous, multi-layered, and structurally complex.**
 
-
-![patterns](graph/patterns.jpg)
+![001](graph/001.jpg)
 
 #### Audio Tokenization with EnCodec
 MusicGen solves the “continuous audio” problem using an existing neural audio codec called **EnCodec**.
@@ -61,17 +60,17 @@ K4: t1, t2, t3, ...
 
 This creates a multi-stream sequence problem:
 
-> Transformers operate on a single linear sequence, but music tokens arrive as **multiple parallel sequences** at each timestep.  
+- Transformers operate on a single linear sequence, but music tokens arrive as **multiple parallel sequences** at each timestep.  
 
 MusicGen explores four different patterns for merging K parallel token streams into a single sequence.
 
-![001](graph/001.jpg)
+![patterns](graph/patterns.png)
 
 - Delay Pattern ensures that the Transformer “knows the plan” before filling in the details.
 
 #### Cross-attention Model
 
-[]()
+![002](graph/music-genmodel.jpg)
 
 This model uses a **Transformer decoder with cross-attention** to turn a text prompt into audio tokens.
 
@@ -103,16 +102,14 @@ These events are discrete and time-aligned, which makes them easy to edit and an
 
 ## Methodology
 
-This project proposes a lightweight control framework for text-to-music generation. Instead of training a new model, I combine symbolic structure information extracted from MIDI files with MusicGen outputs. The goal is to make AI-generated music more predictable, more aligned with user intent, and more suitable for real creative workflows.
+Instead of training a new model, we combine symbolic structure information extracted from MIDI files with MusicGen outputs. The goal is to make AI-generated music more predictable, more aligned with user intent, and more suitable for real creative workflows.
 
 
 * **Experiment 1 — Structure prompts**
   Test whether adding symbolic structure (BPM + section descriptions) into the text prompt improves the structural alignment of generated music.
-  *What it shows:* structure information itself is useful.
 
 * **Experiment 2 — Structure scoring and selection**
   Generate multiple samples and select the one with the best structure score to reduce randomness.
-  *What it shows:* ranking outputs by structure further improves reliability.
 
 * **Evaluation**
    Performance was measured by tempo accuracy, section alignment, and a combined structural similarity score to compare conditions across both experiments.
@@ -120,7 +117,7 @@ This project proposes a lightweight control framework for text-to-music generati
 ### Experiment Architecture
 
 #### Experiment 1
-![Experiment 2](graph/result2.png)
+![Experiment 1](graph/exm1.jpg)
 In the first experiment, we ask a basic question:
 
 > Does adding structural information (like BPM and sections) to a MusicGen prompt produce music that better matches the intended rhythm and timing?
@@ -135,7 +132,7 @@ For both conditions, we create several audio samples and score them on how well 
 If structural prompts matter, then **Condition B** should show closer alignment to the target tempo and section layout.
 
 #### Experiment 2
-[]()
+![Experiment 1](graph/exm2.jpg)
 
 Even with good prompts, models like MusicGen can produce different results each time.  
 The second experiment tests whether **choosing the best result** from multiple outputs leads to more consistent music.
@@ -185,11 +182,13 @@ After running the notebook, you will find:
 
 ### Demo
 
+[View Code Demo →](code.ipynb)
+
 ## Assessment & Evaluation
 
 ### Experimental Results Summary
 
-I evaluated two dimensions of controllability:
+We evaluated two dimensions of controllability:
 
 1. **Prompt-level control:** Does adding structural cues produce more predictable output?
 2. **Post-generation selection:** Does scoring multiple samples improve consistency?
@@ -219,7 +218,7 @@ We generated multiple samples with the same structured prompt and compared:
 
 ![Experiment 2](graph/result2.png)
 
-### 4.3 Intended Uses & Licenses
+### Intended Uses & Licenses
 
 * **Intended usage:**
 
@@ -242,14 +241,14 @@ We generated multiple samples with the same structured prompt and compared:
 
 ## Model & Data Cards
 
-### Model Card — MusicGen (facebook/musicgen-small)
+### Model Card
 
-**Model:** `facebook/musicgen-small`  
-**Released by:** Meta AI 
-**Model type:** Autoregressive Transformer for text-conditioned music generation  
-**Framework:** Transformers / PyTorch  
-**Vocabulary type:** Discrete EnCodec codes (audio tokens)  
-**Parameters:** ~300M  
+- **Model:** `facebook/musicgen-small`  
+- **Released by:** Meta AI 
+- **Model type:** Autoregressive Transformer for text-conditioned music generation  
+- **Framework:** Transformers / PyTorch  
+- **Vocabulary type:** Discrete EnCodec codes (audio tokens)  
+- **Parameters:** ~300M  
 
 #### Intended use
 
@@ -341,7 +340,7 @@ All audio is generated locally using MusicGen during the experiments.
   - `results/exp1_scores.csv`  
   - `results/exp2_scores.csv`  
 
-## 6. Critical Analysis
+## Critical Analysis
 
 This project demonstrates that even lightweight symbolic information—extracting only two structural cues (BPM and section count) from a MIDI reference—can materially improve the controllability of a state-of-the-art text-to-music model. The empirical results were clear: structured prompts produced closer alignment to target rhythmic properties, and best-of-N selection significantly reduced variability in the outputs. These findings suggest that post-processing and prompt engineering, rather than model retraining, can immediately improve user experience for AI-assisted music creation.
 
@@ -405,45 +404,25 @@ Even running a small crowdsourced evaluation (“Which sounds more coherent?”)
 
 #### Text-to-Music Generation (Audio Models)
 
-**1. MusicGen: Simple and Controllable Music Generation**  
-Copet, J., Défossez, A., Huang, J., et al. (2023).  
-Meta AI Research.  
-[Paper](https://arxiv.org/abs/2306.05284) | [Code (GitHub)](https://github.com/facebookresearch/audiocraft)  
+**1. MusicGen: Simple and Controllable Music Generation**  Copet, J., Défossez, A., Huang, J., et al. (2023).  Meta AI Research.  [Paper](https://arxiv.org/abs/2306.05284) | [Code (GitHub)](https://github.com/facebookresearch/audiocraft)  
 
-**2. AudioCraft: Generative Models for Audio**  
-Défossez, A., Copet, J., Synnaeve, G., & Adi, Y. (2023).  
-[Repository](https://github.com/facebookresearch/audiocraft)  
+**2. AudioCraft: Generative Models for Audio**  Défossez, A., Copet, J., Synnaeve, G., & Adi, Y. (2023).  [Repository](https://github.com/facebookresearch/audiocraft)  
 
-**3. EnCodec: High Fidelity Neural Audio Compression**  
-Défossez, A., Castro, D., Rybakov, O., et al. (2022).  
-[Paper](https://arxiv.org/abs/2210.13438)  
+**3. EnCodec: High Fidelity Neural Audio Compression**  Défossez, A., Castro, D., Rybakov, O., et al. (2022).  [Paper](https://arxiv.org/abs/2210.13438)  
 
 #### Symbolic Music Generation (MIDI Transformers)
 
-**4. Music Transformer: Generating Music with Long-Term Structure**  
-Huang, C. A., Vaswani, A., Uszkoreit, J., et al. (2018).  
-Google Brain.  
-[Paper](https://arxiv.org/abs/1809.04281) | [Code](https://github.com/czhuang/transformer-music)  
+**4. Music Transformer: Generating Music with Long-Term Structure**  Huang, C. A., Vaswani, A., Uszkoreit, J., et al. (2018).  Google Brain.  [Paper](https://arxiv.org/abs/1809.04281) | [Code](https://github.com/czhuang/transformer-music)  
 
-**5. MuseNet: Multi-Instrument Music Generation**  
-Payne, C. (2019). OpenAI.  
-[Blog](https://openai.com/blog/musenet/)  
+**5. MuseNet: Multi-Instrument Music Generation**  Payne, C. (2019). OpenAI.  [Blog](https://openai.com/blog/musenet/)  
 
-**6. REMI: A Rhythm-Aware Generative Model for Music Sequences**  
-Huang, Y.-S., & Yang, Y.-H. (2020).  
-[Paper](https://arxiv.org/abs/2002.00212) | [Code](https://github.com/YatingMusic/remi)  
+**6. REMI: A Rhythm-Aware Generative Model for Music Sequences**  Huang, Y.-S., & Yang, Y.-H. (2020).  [Paper](https://arxiv.org/abs/2002.00212) | [Code](https://github.com/YatingMusic/remi)  
 
-**7. Pop Music Transformer**  
-Hsiao, W.-T., & Liu, J.-Y., et al. (2021).  
-[Paper](https://arxiv.org/abs/2009.12280) | [Code](https://github.com/smusiclab/PopMusicTransformer)  
+**7. Pop Music Transformer**  Hsiao, W.-T., & Liu, J.-Y., et al. (2021).  [Paper](https://arxiv.org/abs/2009.12280) | [Code](https://github.com/smusiclab/PopMusicTransformer)  
 
-**8. MidiBERT: MIDI Symbolic Representation with Transformer**  
-Chen, K., & Roberto, M., et al. (2021).  
-[Paper](https://arxiv.org/abs/2104.12871)  
+**8. MidiBERT: MIDI Symbolic Representation with Transformer**  Chen, K., & Roberto, M., et al. (2021).  [Paper](https://arxiv.org/abs/2104.12871)  
 
-**9. Symbolic Music Control with Prompting**  
-Mamonov et al., (2022).  
-[Paper](https://arxiv.org/abs/2212.01065)  
+**9. Symbolic Music Control with Prompting**  Mamonov et al., (2022).  [Paper](https://arxiv.org/abs/2212.01065)  
 
 ### Codebases
 
