@@ -28,7 +28,7 @@ Text-to-music models such as MusicGen can create realistic audio directly from a
 
 In this project, we explore a lightweight way to combine these two research directions:
 
-using simple symbolic cues (such as BPM and segmentation from a MIDI reference) to guide and evaluate MusicGen outputs.
+Using simple symbolic cues (such as BPM and segmentation from a MIDI reference) to guide and evaluate MusicGen outputs.
 
 ### Existing Text-to-Music Baseline (MusicGen)
 
